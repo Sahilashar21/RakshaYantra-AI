@@ -979,6 +979,7 @@ export default function InboxPage() {
         <div className="logo">RakshaYantra AI</div>
         <div className="tagline">AI-Powered Email Security</div>
       </div>
+      
 
       <div className="container">
         {/* SIDEBAR */}

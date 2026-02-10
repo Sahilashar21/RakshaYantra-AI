@@ -1,0 +1,346 @@
+/* ===================== GLOBAL STYLES ===================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #0a0e27;
+  color: #e0e7ff;
+  overflow-x: hidden;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f4b 50%, #0f1428 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.App::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(0, 255, 200, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(102, 51, 255, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 50% 0%, rgba(0, 150, 255, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at -10% 100%, rgba(255, 0, 200, 0.05) 0%, transparent 40%);
+  pointer-events: none;
+  animation: gradientShift 20s ease-in-out infinite;
+  z-index: -1;
+}
+
+.App::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Crect fill='%230a0e27' width='100' height='100'/%3E%3Ccircle cx='20' cy='20' r='1' fill='rgba(0,255,200,0.15)'/%3E%3Ccircle cx='80' cy='30' r='1.5' fill='rgba(102,51,255,0.1)'/%3E%3Ccircle cx='50' cy='60' r='1' fill='rgba(0,200,255,0.12)'/%3E%3C/svg%3E");
+  animation: drift 20s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.5;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    filter: grayscale(0%) saturate(1);
+  }
+  50% {
+    filter: grayscale(15%) saturate(1.2);
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(100px, 100px);
+  }
+}
+
+/* ===================== SCROLLBAR STYLING ===================== */
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 20, 40, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00ffc8 0%, #6633ff 100%);
+  border-radius: 6px;
+  border: 2px solid rgba(15, 20, 40, 0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00ffe0 0%, #7744ff 100%);
+  box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
+}
+
+/* ===================== ANIMATIONS ===================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.95);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px) rotateY(20deg);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px) rotateY(-20deg);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  33% {
+    transform: translateY(-25px);
+  }
+  66% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 255, 200, 0.4), 0 0 40px rgba(102, 51, 255, 0.2), inset 0 0 20px rgba(0, 255, 200, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 255, 200, 0.8), 0 0 80px rgba(102, 51, 255, 0.4), inset 0 0 30px rgba(0, 255, 200, 0.2);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotateReverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes orbitIcon {
+  0% {
+    transform: rotate(0deg) translateX(60px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(60px) rotate(-360deg);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(30px);
+    filter: blur(20px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes neonGlow {
+  0%, 100% {
+    text-shadow: 0 0 10px #00ffc8, 0 0 20px #00ffc8, 0 0 30px #6633ff;
+    filter: brightness(1);
+  }
+  50% {
+    text-shadow: 0 0 20px #00ffc8, 0 0 40px #00ffc8, 0 0 60px #6633ff, 0 0 80px #6633ff;
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes morphing {
+  0% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+  100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+}
+
+@keyframes blobShift {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -40px) scale(1.1);
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.95);
+  }
+}
+
+@keyframes liquidSwell {
+  0%, 100% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 0% 100%);
+  }
+  50% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 0% 95%);
+  }
+}
+
+@keyframes magneticPull {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(8px, -8px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes particleFloat {
+  0% {
+    opacity: 0;
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100px) translateX(20px);
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+}

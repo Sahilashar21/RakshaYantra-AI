@@ -1,21 +1,8 @@
-/* inbox.css */
-
-/* Global Styles */
-body {
-    font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%);
-    color: #e0e0e0;
-    height: 100vh;
-    overflow: hidden;
-    line-height: 1.6;
-    animation: backgroundShift 10s ease-in-out infinite alternate;
-}
-@keyframes backgroundShift {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 100% 50%; }
-}
+/* 
+  DEPRECATED: This file has been replaced with styles/InboxPage.css
+  The inbox page now uses modern CSS modules located in the styles folder.
+  Please refer to styles/InboxPage.css for current styling.
+*/
 
 /* Header */
 .header {

@@ -1,1392 +1,397 @@
-// // // // // // // import React, { useEffect, useState } from "react";
-// // // // // // // import api from "../api.js"
-
-// // // // // // // export default function InboxPage() {
-// // // // // // //   const [emails, setEmails] = useState([]);
-// // // // // // //   const [selected, setSelected] = useState(null);
-// // // // // // //   const [loading, setLoading] = useState(true);
-
-// // // // // // //   //  FETCH EMAILS FROM BACKEND
-// // // // // // //   useEffect(() => {
-// // // // // // //     api.get("/emails")
-// // // // // // //       .then(res => {
-// // // // // // //         setEmails(res.data);
-// // // // // // //         setSelected(res.data[0]);
-// // // // // // //         setLoading(false);
-// // // // // // //       })
-// // // // // // //       .catch(err => {
-// // // // // // //         console.error("ERROR FETCHING EMAILS:", err);
-// // // // // // //         setLoading(false);
-// // // // // // //       });
-// // // // // // //   }, []);
-
-// // // // // // //   if (loading) return <h2 style={{ padding: "20px" }}>Loading inbox...</h2>;
-
-// // // // // // //   return (
-// // // // // // //     <div style={{ display: "flex", height: "100vh" }}>
-
-// // // // // // //       {/* LEFT SIDEBAR */}
-// // // // // // //       <div style={{
-// // // // // // //         width: "30%",
-// // // // // // //         borderRight: "1px solid #ccc",
-// // // // // // //         overflowY: "auto",
-// // // // // // //         background: "#fff"
-// // // // // // //       }}>
-// // // // // // //         <h2 style={{ padding: "20px", margin: 0 }}>Inbox</h2>
-
-// // // // // // //         {emails.map(email => (
-// // // // // // //           <div
-// // // // // // //             key={email.id}
-// // // // // // //             onClick={() => setSelected(email)}
-// // // // // // //             style={{
-// // // // // // //               padding: "15px",
-// // // // // // //               borderBottom: "1px solid #eee",
-// // // // // // //               background: selected?.id === email.id ? "#e0f2ff" : "#fff",
-// // // // // // //               cursor: "pointer"
-// // // // // // //             }}
-// // // // // // //           >
-// // // // // // //             <h4 style={{ marginBottom: "5px" }}>{email.subject}</h4>
-// // // // // // //             <p style={{ margin: 0 }}>{email.from}</p>
-// // // // // // //             <small>{email.date}</small>
-// // // // // // //           </div>
-// // // // // // //         ))}
-
-// // // // // // //         {/* LOGIN BUTTON */}
-// // // // // // //         <div style={{ padding: "20px" }}>
-// // // // // // //           <a href="http://localhost:5000/auth/login">
-// // // // // // //             <button style={{
-// // // // // // //               width: "100%",
-// // // // // // //               padding: "10px",
-// // // // // // //               background: "#4285F4",
-// // // // // // //               color: "white",
-// // // // // // //               border: "none",
-// // // // // // //               borderRadius: "5px",
-// // // // // // //               marginTop: "20px",
-// // // // // // //               cursor: "pointer"
-// // // // // // //             }}>
-// // // // // // //               Login with Google
-// // // // // // //             </button>
-// // // // // // //           </a>
-// // // // // // //         </div>
-// // // // // // //       </div>
-
-// // // // // // //       {/* RIGHT PANEL */}
-// // // // // // //       <div style={{ width: "70%", padding: "30px", background: "#f8f9fc" }}>
-// // // // // // //         {selected ? (
-// // // // // // //           <>
-// // // // // // //             <h2>{selected.subject}</h2>
-// // // // // // //             <p>{selected.from}</p>
-// // // // // // //             <i>{selected.date}</i>
-// // // // // // //             <hr />
-
-// // // // // // //             <p style={{ whiteSpace: "pre-wrap", fontSize: "16px" }}>
-// // // // // // //               {selected.body || "No message body found"}
-// // // // // // //             </p>
-// // // // // // //           </>
-// // // // // // //         ) : (
-// // // // // // //           <h2>Select an email</h2>
-// // // // // // //         )}
-// // // // // // //       </div>
-// // // // // // //     </div>
-// // // // // // //   );
-// // // // // // // }
-
-
-// // // // // // import React, { useEffect, useState } from "react";
-// // // // // // import api from "../api";
-
-// // // // // // export default function InboxPage() {
-// // // // // //   const [emails, setEmails] = useState([]);
-// // // // // //   const [selected, setSelected] = useState(null);
-// // // // // //   const [body, setBody] = useState("");
-// // // // // //   const [links, setLinks] = useState([]);
-// // // // // //   const [loading, setLoading] = useState(true);
-
-
-// // // // // //   // LOAD INBOX
-// // // // // //   useEffect(() => {
-// // // // // //     api.get("/emails")
-// // // // // //       .then(res => {
-// // // // // //         setEmails(res.data);
-// // // // // //         setLoading(false);
-
-// // // // // //         if (res.data.length > 0) {
-// // // // // //           loadFullEmail(res.data[0].id, res.data[0]);
-// // // // // //         }
-// // // // // //       })
-// // // // // //       .catch(err => {
-// // // // // //         console.error("INBOX LOAD ERROR:", err);
-// // // // // //         setLoading(false);
-// // // // // //       });
-// // // // // //   }, []);
-
-
-// // // // // //   // LOAD FULL EMAIL BODY + LINKS
-// // // // // //   const loadFullEmail = (id, emailMeta) => {
-// // // // // //     setSelected(emailMeta);
-
-// // // // // //     api.get(`/email/${id}`)
-// // // // // //       .then(res => {
-// // // // // //         setBody(res.data.body || "");
-// // // // // //         setLinks(res.data.links || []);
-// // // // // //       })
-// // // // // //       .catch(err => console.error("EMAIL BODY ERROR:", err));
-// // // // // //   };
-
-
-// // // // // //   if (loading)
-// // // // // //     return <h2 style={{ padding: "20px" }}>Loading inbox...</h2>;
-
-
-// // // // // //   return (
-// // // // // //     <div style={{ display: "flex", height: "100vh" }}>
-
-// // // // // //       {/* LEFT SIDEBAR */}
-// // // // // //       <div style={{
-// // // // // //         width: "30%",
-// // // // // //         borderRight: "1px solid #ccc",
-// // // // // //         overflowY: "auto"
-// // // // // //       }}>
-// // // // // //         <h2 style={{ padding: "20px" }}>Inbox</h2>
-
-// // // // // //         {/* LOGIN BUTTON */}
-// // // // // //         <a href="http://localhost:5000/auth/login">
-// // // // // //           <button style={{
-// // // // // //             margin: "10px 20px",
-// // // // // //             width: "80%",
-// // // // // //             background: "#4285F4",
-// // // // // //             color: "white",
-// // // // // //             padding: "10px",
-// // // // // //             borderRadius: "5px",
-// // // // // //             border: "none"
-// // // // // //           }}>
-// // // // // //             Login with Google
-// // // // // //           </button>
-// // // // // //         </a>
-
-// // // // // //         {/* EMAIL LIST */}
-// // // // // //         {emails.map(email => (
-// // // // // //           <div
-// // // // // //             key={email.id}
-// // // // // //             onClick={() => loadFullEmail(email.id, email)}
-// // // // // //             style={{
-// // // // // //               padding: "15px",
-// // // // // //               cursor: "pointer",
-// // // // // //               borderBottom: "1px solid #eee",
-// // // // // //               background: selected?.id === email.id ? "#e0f2ff" : "#fff"
-// // // // // //             }}
-// // // // // //           >
-// // // // // //             <h4>{email.subject}</h4>
-// // // // // //             <p>{email.from}</p>
-// // // // // //             <small>{email.date}</small>
-// // // // // //           </div>
-// // // // // //         ))}
-// // // // // //       </div>
-
-
-// // // // // //       {/* RIGHT PANEL */}
-// // // // // //       <div style={{ width: "70%", padding: "30px" }}>
-// // // // // //         {selected ? (
-// // // // // //           <>
-// // // // // //             <h2>{selected.subject}</h2>
-// // // // // //             <p>{selected.from}</p>
-// // // // // //             <i>{selected.date}</i>
-
-// // // // // //             <hr />
-
-// // // // // //             {/* EMAIL BODY */}
-// // // // // //             <pre style={{ whiteSpace: "pre-wrap", fontSize: "16px" }}>
-// // // // // //               {body || "No body found"}
-// // // // // //             </pre>
-
-// // // // // //             <hr />
-
-// // // // // //             {/* EXTRACTED LINKS */}
-// // // // // //             <h3>Links Found:</h3>
-// // // // // //             {links.length === 0 && <p>No links detected</p>}
-
-// // // // // //             <ul>
-// // // // // //               {links.map((link, i) => (
-// // // // // //                 <li key={i}>
-// // // // // //                   <a href={link} target="_blank" rel="noreferrer">
-// // // // // //                     {link}
-// // // // // //                   </a>
-// // // // // //                 </li>
-// // // // // //               ))}
-// // // // // //             </ul>
-// // // // // //           </>
-// // // // // //         ) : (
-// // // // // //           <h2>Select an email</h2>
-// // // // // //         )}
-// // // // // //       </div>
-
-// // // // // //     </div>
-// // // // // //   );
-// // // // // // }
-
-
-// // // // // import React, { useEffect, useState } from "react";
-// // // // // import api from "../api";
-// // // // // import '../inbox.css';
-// // // // // export default function InboxPage() {
-// // // // //   const [emails, setEmails] = useState([]);
-// // // // //   const [selected, setSelected] = useState(null);
-// // // // //   const [body, setBody] = useState("");
-// // // // //   const [links, setLinks] = useState([]);
-// // // // //   const [scans, setScans] = useState([]);
-// // // // //   const [loading, setLoading] = useState(true);
-
-// // // // //   // Load inbox
-// // // // //   useEffect(() => {
-// // // // //     api.get("/emails")
-// // // // //       .then(res => {
-// // // // //         setEmails(res.data);
-// // // // //         setLoading(false);
-
-// // // // //         if (res.data.length > 0) {
-// // // // //           loadFullEmail(res.data[0].id, res.data[0]);
-// // // // //         }
-// // // // //       })
-// // // // //       .catch(err => {
-// // // // //         console.error("INBOX LOAD ERROR:", err);
-// // // // //       });
-// // // // //   }, []);
-
-// // // // //   // Load full body + links + scan results
-// // // // //   const loadFullEmail = (id, emailMeta) => {
-// // // // //     setSelected(emailMeta);
-
-// // // // //     api.get(`/email/${id}`)
-// // // // //       .then(res => {
-// // // // //         setBody(res.data.body || "");
-// // // // //         setLinks(res.data.links || []);
-// // // // //         setScans(res.data.scans || []);
-// // // // //       })
-// // // // //       .catch(err => console.error("EMAIL BODY ERROR:", err));
-// // // // //   };
-
-
-// // // // //   return (
-// // // // //     <div style={{ display: "flex", height: "100vh" }}>
-
-// // // // //       {/* LEFT: Inbox List */}
-// // // // //       <div style={{
-// // // // //         width: "30%",
-// // // // //         borderRight: "1px solid #ccc",
-// // // // //         overflowY: "auto"
-// // // // //       }}>
-// // // // //         <h2 style={{ padding: 20 }}>Inbox</h2>
-
-// // // // //         <a href="http://localhost:5000/auth/login">
-// // // // //           <button style={{
-// // // // //             margin: 20,
-// // // // //             width: "80%",
-// // // // //             background: "#4285F4",
-// // // // //             color: "#fff",
-// // // // //             padding: 10,
-// // // // //             borderRadius: 5,
-// // // // //             border: "none"
-// // // // //           }}>Login With Google</button>
-// // // // //         </a>
-
-// // // // //         {emails.map(email => (
-// // // // //           <div
-// // // // //             key={email.id}
-// // // // //             onClick={() => loadFullEmail(email.id, email)}
-// // // // //             style={{
-// // // // //               padding: 15,
-// // // // //               borderBottom: "1px solid #eee",
-// // // // //               cursor: "pointer",
-// // // // //               background: selected?.id === email.id ? "#e3f3ff" : "#fff"
-// // // // //             }}
-// // // // //           >
-// // // // //             <h4>{email.subject}</h4>
-// // // // //             <p>{email.from}</p>
-// // // // //             <small>{email.date}</small>
-// // // // //           </div>
-// // // // //         ))}
-// // // // //       </div>
-
-// // // // //       {/* RIGHT: Full Email */}
-// // // // //       <div style={{ width: "70%", padding: 30 }}>
-// // // // //         {selected ? (
-// // // // //           <>
-// // // // //             <h2>{selected.subject}</h2>
-// // // // //             <p>{selected.from}</p>
-// // // // //             <i>{selected.date}</i>
-// // // // //             <hr />
-
-// // // // //             {/* Body */}
-// // // // //             <div dangerouslySetInnerHTML={{ __html: body }} />
-
-// // // // //             <hr />
-
-// // // // //             {/* Links */}
-// // // // //             <h3>Extracted Links:</h3>
-// // // // //             {links.length === 0 ? <p>No links found</p> : null}
-// // // // //             <ul>
-// // // // //               {links.map((l, i) => (
-// // // // //                 <li key={i}>
-// // // // //                   <a href={l} target="_blank" rel="noreferrer">{l}</a>
-// // // // //                 </li>
-// // // // //               ))}
-// // // // //             </ul>
-
-// // // // //             {/* Scan Results */}
-// // // // //             <h3>Scan Results:</h3>
-// // // // //             {scans.map((s, i) => (
-// // // // //               <div key={i} style={{ marginBottom: 10 }}>
-// // // // //                 <b>{s.link}</b><br />
-// // // // //                 {s.safe ? (
-// // // // //                   <span style={{ color: "green" }}>SAFE ✓</span>
-// // // // //                 ) : (
-// // // // //                   <span style={{ color: "red" }}>
-// // // // //                     DANGEROUS — {s.threat}
-// // // // //                   </span>
-// // // // //                 )}
-// // // // //               </div>
-// // // // //             ))}
-
-// // // // //           </>
-// // // // //         ) : (
-// // // // //           <h2>Select an email</h2>
-// // // // //         )}
-// // // // //       </div>
-
-// // // // //     </div>
-// // // // //   );
-// // // // // }
-
-
-// // // // import React, { useEffect, useState } from "react";
-// // // // import api from "../api";
-// // // // import '../inbox.css';
-// // // // export default function InboxPage() {
-// // // //   const [emails, setEmails] = useState([]);
-// // // //   const [selected, setSelected] = useState(null);
-// // // //   const [body, setBody] = useState("");
-// // // //   const [links, setLinks] = useState([]);
-// // // //   const [scans, setScans] = useState([]);
-// // // //   const [loading, setLoading] = useState(true);
-
-// // // //   // Load inbox
-// // // //   useEffect(() => {
-// // // //     api.get("/emails")
-// // // //       .then(res => {
-// // // //         setEmails(res.data);
-// // // //         setLoading(false);
-
-// // // //         if (res.data.length > 0) {
-// // // //           loadFullEmail(res.data[0].id, res.data[0]);
-// // // //         }
-// // // //       })
-// // // //       .catch(err => {
-// // // //         console.error("INBOX LOAD ERROR:", err);
-// // // //       });
-// // // //   }, []);
-
-// // // //   // Load full body + links + scan results
-// // // //   const loadFullEmail = (id, emailMeta) => {
-// // // //     setSelected(emailMeta);
-
-// // // //     api.get(`/email/${id}`)
-// // // //       .then(res => {
-// // // //         setBody(res.data.body || "");
-// // // //         setLinks(res.data.links || []);
-// // // //         setScans(res.data.scans || []);
-// // // //       })
-// // // //       .catch(err => console.error("EMAIL BODY ERROR:", err));
-// // // //   };
-
-// // // //   if (loading)
-// // // //     return <h2 className="loading">Loading inbox...</h2>;
-
-// // // //   return (
-// // // //     <>
-// // // //       {/* Header */}
-// // // //       <div className="header">
-// // // //         <div className="logo">RakshaYantra AI</div>
-// // // //         <div className="tagline">AI-Powered Phishing Detection & Email Security</div>
-// // // //       </div>
-
-// // // //       {/* Main Container */}
-// // // //       <div className="container">
-// // // //         {/* Left Sidebar: Inbox Scanner */}
-// // // //         <div className="sidebar">
-// // // //           <h2>Inbox Scanner</h2>
-// // // //           <div className="search-bar">
-// // // //             <input type="text" placeholder="Search emails..." />
-// // // //           </div>
-// // // //           <a href="http://localhost:5000/auth/login" className="login-btn">
-// // // //             Login with Google
-// // // //           </a>
-// // // //           <ul className="email-list">
-// // // //             {emails.map(email => (
-// // // //               <li
-// // // //                 key={email.id}
-// // // //                 className={`email-item ${selected?.id === email.id ? 'selected' : ''}`}
-// // // //                 onClick={() => loadFullEmail(email.id, email)}
-// // // //               >
-// // // //                 <h4>{email.subject}</h4>
-// // // //                 <p>{email.from}</p>
-// // // //                 <small>{email.date}</small>
-// // // //               </li>
-// // // //             ))}
-// // // //           </ul>
-// // // //         </div>
-
-// // // //         {/* Right Panel: Email Analysis */}
-// // // //         <div className="main-panel">
-// // // //           {selected ? (
-// // // //             <>
-// // // //               <h2>{selected.subject}</h2>
-// // // //               <p>{selected.from}</p>
-// // // //               <i>{selected.date}</i>
-// // // //               <hr />
-// // // //               <div className="email-body" dangerouslySetInnerHTML={{ __html: body }} />
-// // // //               <hr />
-// // // //               <div className="links-section">
-// // // //                 <h3>Extracted Links:</h3>
-// // // //                 {links.length === 0 ? <p>No links found</p> : (
-// // // //                   <ul className="links-list">
-// // // //                     {links.map((l, i) => (
-// // // //                       <li key={i}>
-// // // //                         <a href={l} target="_blank" rel="noreferrer">{l}</a>
-// // // //                       </li>
-// // // //                     ))}
-// // // //                   </ul>
-// // // //                 )}
-// // // //               </div>
-// // // //               <hr />
-// // // //               <div className="scans-section">
-// // // //                 <h3>Scan Results:</h3>
-// // // //                 {scans.map((s, i) => (
-// // // //                   <div key={i} className="scan-item">
-// // // //                     <b>{s.link}</b>
-// // // //                     <div className={`status ${s.safe ? 'safe' : 'dangerous'}`}>
-// // // //                       {s.safe ? 'SAFE ✓' : `DANGEROUS — ${s.threat}`}
-// // // //                     </div>
-// // // //                     <div className="progress-bar">
-// // // //                       <div className={`progress-fill ${!s.safe ? 'danger' : ''}`}></div>
-// // // //                     </div>
-// // // //                   </div>
-// // // //                 ))}
-// // // //               </div>
-// // // //             </>
-// // // //           ) : (
-// // // //             <div className="no-selection">
-// // // //               <h2>Select an email to analyze</h2>
-// // // //             </div>
-// // // //           )}
-// // // //         </div>
-// // // //       </div>
-
-// // // //       {/* Footer */}
-// // // //       <div className="footer">
-// // // //         RakshaYantra AI - Protecting Against Phishing Threats | <a href="#">Learn More</a> | Powered by Advanced AI
-// // // //       </div>
-// // // //     </>
-// // // //   );
-// // // // }
-
-
-
-// // // // import React, { useEffect, useState } from "react";
-// // // // import api from "../api";
-// // // // import '../inbox.css';
-
-// // // // export default function InboxPage() {
-// // // //   const [emails, setEmails] = useState([]);
-// // // //   const [selected, setSelected] = useState(null);
-
-// // // //   const [body, setBody] = useState("");
-// // // //   const [links, setLinks] = useState([]);
-
-// // // //   const [urlScans, setUrlScans] = useState([]);
-// // // //   const [attachments, setAttachments] = useState([]);
-// // // //   const [attachmentScans, setAttachmentScans] = useState([]);
-
-// // // //   const [isPhishing, setIsPhishing] = useState(false);
-// // // //   const [phishingReasons, setPhishingReasons] = useState([]);
-
-// // // //   const [loading, setLoading] = useState(true);
-
-// // // //   // Load inbox on startup
-// // // //   useEffect(() => {
-// // // //     api.get("/emails")
-// // // //       .then(res => {
-// // // //         setEmails(res.data);
-// // // //         setLoading(false);
-
-// // // //         if (res.data.length > 0) {
-// // // //           loadFullEmail(res.data[0].id, res.data[0]);
-// // // //         }
-// // // //       })
-// // // //       .catch(err => console.error("INBOX LOAD ERROR:", err));
-// // // //   }, []);
-
-// // // //   // ---------------------------
-// // // //   // LOAD FULL EMAIL
-// // // //   // ---------------------------
-// // // //   const loadFullEmail = (id, emailMeta) => {
-// // // //     setSelected(emailMeta);
-
-// // // //     api.get(`/email/${id}`)
-// // // //       .then(res => {
-// // // //         setBody(res.data.body || "");
-// // // //         setLinks(res.data.links || []);
-// // // //         setUrlScans(res.data.urlScans || []);
-// // // //         setAttachments(res.data.attachments || []);
-// // // //         setAttachmentScans(res.data.attachmentScans || []);
-
-// // // //         // -------------------------
-// // // //         // PHISHING DETECTION LOGIC
-// // // //         // -------------------------
-// // // //         let danger = false;
-// // // //         let reasons = [];
-
-// // // //         // URL-based threats
-// // // //         res.data.urlScans?.forEach(s => {
-// // // //           if (!s.googleSafe) {
-// // // //             danger = true;
-// // // //             reasons.push("Google Safe Browsing flagged: " + s.googleThreat);
-// // // //           }
-// // // //           if (s.vtMalicious > 0) {
-// // // //             danger = true;
-// // // //             reasons.push(`${s.vtMalicious} VirusTotal engines flagged URL as malicious`);
-// // // //           }
-// // // //           if (s.vtSuspicious > 2) {
-// // // //             danger = true;
-// // // //             reasons.push(`${s.vtSuspicious} engines marked URL as suspicious`);
-// // // //           }
-// // // //         });
-
-// // // //         // Attachment-based threats
-// // // //         res.data.attachmentScans?.forEach(a => {
-// // // //           if (a.vtMalicious > 0) {
-// // // //             danger = true;
-// // // //             reasons.push(`${a.filename}: ${a.vtMalicious} engines flagged this file as malicious`);
-// // // //           }
-// // // //           if (a.vtSuspicious > 2) {
-// // // //             danger = true;
-// // // //             reasons.push(`${a.filename}: suspicious file behavior`);
-// // // //           }
-// // // //         });
-
-// // // //         setIsPhishing(danger);
-// // // //         setPhishingReasons(reasons);
-// // // //       })
-// // // //       .catch(err => console.error("EMAIL BODY ERROR:", err));
-// // // //   };
-
-// // // //   // if (loading) return <h2 className="loading">Loading inbox...</h2>;
-
-// // // //   return (
-// // // //     <>
-// // // //       {/* Header */}
-// // // //       <div className="header">
-// // // //         <div className="logo">RakshaYantra AI</div>
-// // // //         <div className="tagline">AI-Powered Phishing Detection & Email Security</div>
-// // // //       </div>
-
-// // // //       {/* Container */}
-// // // //       <div className="container">
-
-// // // //         {/* SIDEBAR */}
-// // // //         <div className="sidebar">
-// // // //           <h2>Inbox Scanner</h2>
-
-// // // //           <div className="search-bar">
-// // // //             <input type="text" placeholder="Search emails..." />
-// // // //           </div>
-
-// // // //           <a href="http://localhost:5000/auth/login" className="login-btn">
-// // // //             Login with Google
-// // // //           </a>
-
-// // // //           <ul className="email-list">
-// // // //             {emails.map(email => (
-// // // //               <li
-// // // //                 key={email.id}
-// // // //                 className={`email-item ${selected?.id === email.id ? "selected" : ""}`}
-// // // //                 onClick={() => loadFullEmail(email.id, email)}
-// // // //               >
-// // // //                 <h4>{email.subject}</h4>
-// // // //                 <p>{email.from}</p>
-// // // //                 <small>{email.date}</small>
-// // // //               </li>
-// // // //             ))}
-// // // //           </ul>
-// // // //         </div>
-
-// // // //         {/* MAIN PANEL */}
-// // // //         <div className="main-panel">
-// // // //           {!selected ? (
-// // // //             <div className="no-selection">
-// // // //               <h2>Select an email to analyze</h2>
-// // // //             </div>
-// // // //           ) : (
-// // // //             <>
-// // // //               <h2>{selected.subject}</h2>
-// // // //               <p>{selected.from}</p>
-// // // //               <i>{selected.date}</i>
-// // // //               <hr />
-
-// // // //               {/* PHISHING WARNING */}
-// // // //               {isPhishing && (
-// // // //                 <div className="phishing-warning">
-// // // //                   <h3>⚠ PHISHING DETECTED</h3>
-// // // //                   <p>This email contains unsafe or malicious content.</p>
-
-// // // //                   <ul>
-// // // //                     {phishingReasons.map((r, i) => (
-// // // //                       <li key={i}>{r}</li>
-// // // //                     ))}
-// // // //                   </ul>
-// // // //                 </div>
-// // // //               )}
-
-// // // //               {/* EMAIL BODY */}
-// // // //               <div
-// // // //                 className="email-body"
-// // // //                 dangerouslySetInnerHTML={{ __html: body }}
-// // // //               />
-// // // //               <hr />
-
-// // // //               {/* LINKS */}
-// // // //               <div className="links-section">
-// // // //                 <h3>Extracted Links</h3>
-// // // //                 {links.length === 0 ? (
-// // // //                   <p>No links found</p>
-// // // //                 ) : (
-// // // //                   <ul className="links-list">
-// // // //                     {links.map((l, i) => (
-// // // //                       <li key={i}>
-// // // //                         <a href={l} target="_blank" rel="noreferrer">{l}</a>
-// // // //                       </li>
-// // // //                     ))}
-// // // //                   </ul>
-// // // //                 )}
-// // // //               </div>
-// // // //               <hr />
-
-// // // //               {/* URL SCAN RESULTS */}
-// // // //               <div className="scans-section">
-// // // //                 <h3>URL Scan Results</h3>
-
-// // // //                 {urlScans.length === 0 && <p>No URL scan results</p>}
-
-// // // //                 {urlScans.map((s, i) => (
-// // // //                   <div key={i} className="scan-item">
-// // // //                     <b>{s.link}</b>
-
-// // // //                     <div className={`status ${s.googleSafe ? "safe" : "dangerous"}`}>
-// // // //                       {s.googleSafe
-// // // //                         ? "SAFE ✓"
-// // // //                         : `DANGEROUS — ${s.googleThreat || (s.vtMalicious > 0 ? "Malicious Detected" : "Suspicious")}`}
-// // // //                     </div>
-
-// // // //                     <div className="details">
-// // // //                       VT Malicious: {s.vtMalicious}  
-// // // //                       <br />
-// // // //                       VT Suspicious: {s.vtSuspicious}
-// // // //                     </div>
-// // // //                   </div>
-// // // //                 ))}
-// // // //               </div>
-
-// // // //               <hr />
-
-// // // //               {/* ATTACHMENTS */}
-// // // //               <h3>Attachments</h3>
-// // // //               {attachments.length === 0 ? (
-// // // //                 <p>No attachments found</p>
-// // // //               ) : (
-// // // //                 <ul>
-// // // //                   {attachments.map((a, i) => (
-// // // //                     <li key={i}>{a.filename} ({a.mimeType}) — {a.size} bytes</li>
-// // // //                   ))}
-// // // //                 </ul>
-// // // //               )}
-
-// // // //               {/* ATTACHMENT SCANS */}
-// // // //               <h3>Attachment Scan Results</h3>
-
-// // // //               {attachmentScans.map((a, i) => (
-// // // //                 <div key={i} className="scan-item">
-// // // //                   <b>{a.filename}</b><br />
-
-// // // //                   {a.vtMalicious > 0 ? (
-// // // //                     <span className="dangerous">
-// // // //                       Malicious: {a.vtMalicious} engines
-// // // //                     </span>
-// // // //                   ) : (
-// // // //                     <span className="safe">Clean (0 malicious engines)</span>
-// // // //                   )}
-
-// // // //                   {a.vtSuspicious > 0 && (
-// // // //                     <p className="suspicious">
-// // // //                       Suspicious: {a.vtSuspicious} engines
-// // // //                     </p>
-// // // //                   )}
-// // // //                 </div>
-// // // //               ))}
-// // // //             </>
-// // // //           )}
-// // // //         </div>
-// // // //       </div>
-
-// // // //       {/* FOOTER */}
-// // // //       <div className="footer">
-// // // //         RakshaYantra AI - Protecting Against Phishing Threats |
-// // // //         <a href="#"> Learn More </a> | Powered by AI
-// // // //       </div>
-// // // //     </>
-// // // //   );
-// // // // }
-
-// // // import React, { useEffect, useState } from "react";
-// // // import api from "../api";
-// // // import "../inbox.css";
-
-// // // export default function InboxPage() {
-// // //   const [emails, setEmails] = useState([]);
-// // //   const [selected, setSelected] = useState(null);
-
-// // //   const [body, setBody] = useState("");
-// // //   const [links, setLinks] = useState([]);
-
-// // //   const [urlScans, setUrlScans] = useState([]);
-// // //   const [attachments, setAttachments] = useState([]);
-// // //   const [attachmentScans, setAttachmentScans] = useState([]);
-
-// // //   const [sandboxReport, setSandboxReport] = useState(null);
-// // //   const [sandboxLoading, setSandboxLoading] = useState(false);
-
-// // //   const [loading, setLoading] = useState(true);
-
-// // //   // Load inbox
-// // //   useEffect(() => {
-// // //     api
-// // //       .get("/emails")
-// // //       .then((res) => {
-// // //         setEmails(res.data);
-// // //         setLoading(false);
-
-// // //         if (res.data.length > 0) {
-// // //           loadEmail(res.data[0]);
-// // //         }
-// // //       })
-// // //       .catch(() => {
-// // //         setEmails([]); // Not logged in → show login button
-// // //         setLoading(false);
-// // //       });
-// // //   }, []);
-
-// // //   const loadEmail = (emailMeta) => {
-// // //     setSelected(emailMeta);
-
-// // //     api.get(`/email/${emailMeta.id}`).then((res) => {
-// // //       setBody(res.data.body);
-// // //       setLinks(res.data.links);
-// // //       setUrlScans(res.data.urlScans);
-// // //       setAttachments(res.data.attachments);
-// // //       setAttachmentScans(res.data.attachmentScans);
-
-// // //       setSandboxReport(null);
-// // //     });
-// // //   };
-
-// // //   const runSandbox = async (url) => {
-// // //     setSandboxLoading(true);
-// // //     setSandboxReport(null);
-
-// // //     const res = await api.post("/sandbox", { url });
-// // //     setSandboxReport(res.data);
-
-// // //     setSandboxLoading(false);
-// // //   };
-
-// // //   return (
-// // //     <>
-// // //       {/* HEADER */}
-// // //       <div className="header">
-// // //         <div className="logo">RakshaYantra AI</div>
-// // //         <div className="tagline">AI Email Security & Sandbox</div>
-// // //       </div>
-
-// // //       <div className="container">
-// // //         {/* SIDEBAR */}
-// // //         <div className="sidebar">
-// // //           <h2>Inbox</h2>
-
-// // //           {/* LOGIN BUTTON (show only if no emails = not logged in) */}
-// // //           {emails.length === 0 && (
-// // //             <div className="login-section">
-// // //               <a
-// // //                 href="http://localhost:5000/auth/login"
-// // //                 className="login-btn"
-// // //               >
-// // //                 Login with Google
-// // //               </a>
-// // //             </div>
-// // //           )}
-
-// // //           {/* SHOW THIS AFTER LOGIN */}
-// // //           {emails.length > 0 && (
-// // //             <div className="logged-in">✔ Logged in with Google</div>
-// // //           )}
-
-// // //           <ul className="email-list">
-// // //             {emails.map((e) => (
-// // //               <li
-// // //                 key={e.id}
-// // //                 className={`email-item ${
-// // //                   selected?.id === e.id ? "selected" : ""
-// // //                 }`}
-// // //                 onClick={() => loadEmail(e)}
-// // //               >
-// // //                 <h4>{e.subject}</h4>
-// // //                 <p>{e.from}</p>
-// // //                 <small>{e.date}</small>
-// // //               </li>
-// // //             ))}
-// // //           </ul>
-// // //         </div>
-
-// // //         {/* MAIN PANEL */}
-// // //         <div className="main-panel">
-// // //           {!selected ? (
-// // //             <h2>Select an email</h2>
-// // //           ) : (
-// // //             <>
-// // //               {/* EMAIL HEADER */}
-// // //               <h2>{selected.subject}</h2>
-// // //               <p>{selected.from}</p>
-
-// // //               {/* EMAIL BODY */}
-// // //               <div
-// // //                 className="email-body"
-// // //                 dangerouslySetInnerHTML={{ __html: body }}
-// // //               ></div>
-
-// // //               <hr />
-
-// // //               {/* LINKS */}
-// // //               <h3>Links</h3>
-// // //               <ul>
-// // //                 {links.map((l, i) => (
-// // //                   <li key={i}>
-// // //                     {l}
-// // //                     <button
-// // //                       className="sandbox-btn"
-// // //                       onClick={() => runSandbox(l)}
-// // //                     >
-// // //                       Run Sandbox
-// // //                     </button>
-// // //                   </li>
-// // //                 ))}
-// // //               </ul>
-
-// // //               {/* SANDBOX */}
-// // //               {sandboxLoading && (
-// // //                 <div className="sandbox-box">
-// // //                   <h3>Running sandbox...</h3>
-// // //                 </div>
-// // //               )}
-
-// // //               {sandboxReport && (
-// // //                 <div className="sandbox-box">
-// // //                   <h3>Sandbox Analysis</h3>
-
-// // //                   <p>
-// // //                     <b>Risk Score:</b>{" "}
-// // //                     <span
-// // //                       style={{
-// // //                         color:
-// // //                           sandboxReport.analysis.riskScore > 70
-// // //                             ? "red"
-// // //                             : sandboxReport.analysis.riskScore > 40
-// // //                             ? "orange"
-// // //                             : "green",
-// // //                       }}
-// // //                     >
-// // //                       {sandboxReport.analysis.riskScore}%
-// // //                     </span>
-// // //                   </p>
-
-// // //                   <h4>⚠ Flags:</h4>
-// // //                   <ul>
-// // //                     {sandboxReport.analysis.flags.map((f, i) => (
-// // //                       <li key={i}>{f}</li>
-// // //                     ))}
-// // //                   </ul>
-
-// // //                   <details>
-// // //                     <summary>Raw Network Activity</summary>
-// // //                     <pre>{JSON.stringify(sandboxReport.raw, null, 2)}</pre>
-// // //                   </details>
-// // //                 </div>
-// // //               )}
-// // //             </>
-// // //           )}
-// // //         </div>
-// // //       </div>
-// // //     </>
-// // //   );
-// // // }
-
-
-
-// // import React, { useEffect, useState } from "react";
-// // import api from "../api";
-// // import "../inbox.css";
-
-// // export default function InboxPage() {
-// //   const [emails, setEmails] = useState([]);
-// //   const [selected, setSelected] = useState(null);
-
-// //   const [body, setBody] = useState("");
-// //   const [analysis, setAnalysis] = useState(null);
-
-// //   useEffect(() => {
-// //   api
-// //     .get("/emails")
-// //     .then((res) => {
-// //       setEmails(res.data);
-// //       // ❌ Do NOT auto-load the first email
-// //       // The user will click one manually
-// //     })
-// //     .catch(() => setEmails([]));
-// // }, []);
-
-
-// //   // Load full email + security analysis
-// //   const loadEmail = (emailMeta) => {
-// //     setSelected(emailMeta);
-// //     setAnalysis(null);
-
-// //     api.get(`/email/${emailMeta.id}`).then((res) => {
-// //       setBody(res.data.body);
-// //       setAnalysis(res.data);
-// //     });
-// //   };
-
-// //   return (
-// //     <>
-// //       {/* HEADER */}
-// //       <div className="header">
-// //         <div className="logo">RakshaYantra AI</div>
-// //         <div className="tagline">AI-Powered Email Security</div>
-// //       </div>
-      
-
-// //       <div className="container">
-// //         {/* SIDEBAR */}
-// //         <div className="sidebar">
-// //           <h2>Inbox</h2>
-
-// //           {emails.length === 0 && (
-// //             <a href="http://localhost:5000/auth/login" className="login-btn">
-// //               Login with Google
-// //             </a>
-// //           )}
-
-// //           {emails.length > 0 && <div className="logged-in">✔ Logged In</div>}
-
-// //           <ul className="email-list">
-// //             {emails.map((e) => (
-// //               <li
-// //                 key={e.id}
-// //                 onClick={() => loadEmail(e)}
-// //                 className={selected?.id === e.id ? "selected" : ""}
-// //               >
-// //                 <h4>{e.subject}</h4>
-// //                 <p>{e.from}</p>
-// //                 <small>{e.date}</small>
-// //               </li>
-// //             ))}
-// //           </ul>
-// //         </div>
-
-// //         {/* MAIN PANEL */}
-// //         <div className="main-panel">
-// //           {!selected ? (
-// //             <h2>Select an email</h2>
-// //           ) : !analysis ? (
-// //             <h2>Analyzing email...</h2>
-// //           ) : (
-// //             <>
-// //               <h2>{selected.subject}</h2>
-// //               <p>{selected.from}</p>
-
-// //               <div
-// //                 className="email-body"
-// //                 dangerouslySetInnerHTML={{ __html: body }}
-// //               ></div>
-
-// //               <hr />
-
-// //               {/* SECURITY VERDICT */}
-// //               <div className="verdict-box">
-// //                 <h3>
-// //                   Security Status:{" "}
-// //                   <span
-// //                     style={{
-// //                       color:
-// //                         analysis.finalScore >= 70
-// //                           ? "red"
-// //                           : analysis.finalScore >= 40
-// //                           ? "orange"
-// //                           : "green",
-// //                     }}
-// //                   >
-// //                     {analysis.verdict}
-// //                   </span>
-// //                 </h3>
-
-// //                 <p>Risk Score: {analysis.finalScore}%</p>
-
-// //                 <h4>Reasons:</h4>
-// //                 <ul>
-// //                   {/* LAYER 1 & 2: URL issues */}
-// //                   {analysis.urlScans.map((u, i) => (
-// //                     <React.Fragment key={i}>
-// //                       {!u.googleSafe && (
-// //                         <li>Google Safe Browsing flagged unsafe link</li>
-// //                       )}
-// //                       {u.vtMalicious > 0 && (
-// //                         <li>
-// //                           VirusTotal: {u.vtMalicious} malicious detections
-// //                         </li>
-// //                       )}
-// //                       {u.vtSuspicious > 0 && (
-// //                         <li>
-// //                           VirusTotal: {u.vtSuspicious} suspicious detections
-// //                         </li>
-// //                       )}
-// //                     </React.Fragment>
-// //                   ))}
-
-// //                   {/* ATTACHMENTS */}
-// //                   {analysis.attachmentScans.map((a, i) =>
-// //                     a.vtMalicious > 0 ? (
-// //                       <li key={i}>
-// //                         Attachment {a.filename}: {a.vtMalicious} malicious engines
-// //                       </li>
-// //                     ) : null
-// //                   )}
-
-// //                   {/* SANDBOX FLAGS */}
-// //                   {analysis.sandbox?.flags?.map((f, i) => (
-// //                     <li key={i}>{f}</li>
-// //                   ))}
-// //                 </ul>
-// //               </div>
-// //             </>
-// //           )}
-// //         </div>
-// //       </div>
-// //     </>
-// //   );
-// // }
-
-
-
-// import React, { useEffect, useState } from "react";
-// import api from "../api";
-// import "../App.css";
-// import { FiSearch, FiSettings } from "react-icons/fi";
-
-// export default function InboxPage() {
-//   const [emails, setEmails] = useState([]);
-//   const [selected, setSelected] = useState(null);
-//   const [body, setBody] = useState("");
-//   const [analysis, setAnalysis] = useState(null);
-
-//   useEffect(() => {
-//     api.get("/emails")
-//       .then((res) => setEmails(res.data))
-//       .catch(() => setEmails([]));
-//   }, []);
-
-//   const loadEmail = (emailMeta) => {
-//     setSelected(emailMeta);
-//     setAnalysis(null);
-
-//     api.get(`/email/${emailMeta.id}`).then((res) => {
-//       setBody(res.data.body);
-//       setAnalysis(res.data);
-//     });
-//   };
-
-//   return (
-//     <div className="inbox-container">
-//       {/* TOP NAVBAR */}
-//       <div className="topbar">
-//         <div className="topbar-left">RakshaYantra Mail Security</div>
-
-//         <div className="navbar-links">
-//           <a href="/" className="nav-link active">Inbox</a>
-//           <a href="/videos" className="nav-link">Tutorials</a>
-//           <a href="/news" className="nav-link">News</a>
-//         </div>
-
-//         <div className="search-box">
-//           <FiSearch />
-//           <input placeholder="Search mail..." />
-//         </div>
-
-//         <div className="topbar-icons"><FiSettings /></div>
-//       </div>
-
-//       <div className="layout">
-//         {/* EMAIL LIST SIDEBAR */}
-//         <div className="email-list">
-//           {emails.length === 0 ? (
-//             <a href="http://localhost:5000/auth/login" className="login-btn">
-//               Login with Google
-//             </a>
-//           ) : (
-//             emails.map((e) => (
-//               <div
-//                 key={e.id}
-//                 onClick={() => loadEmail(e)}
-//                 className={`email-item ${selected?.id === e.id ? "selected" : ""}`}
-//               >
-//                 <div>
-//                   <div className="sender">{e.from}</div>
-//                   <div className="subject">{e.subject}</div>
-//                 </div>
-//                 <div className="email-date">{e.date}</div>
-//               </div>
-//             ))
-//           )}
-//         </div>
-
-//         {/* EMAIL PREVIEW */}
-//         <div className="email-preview">
-//           {!selected ? (
-//             <div className="no-email-selected">Select an email</div>
-//           ) : !analysis ? (
-//             <div className="no-email-selected">Analyzing email...</div>
-//           ) : (
-//             <div className="email-content">
-//               <h2>{selected.subject}</h2>
-//               <p className="from">From: {selected.from}</p>
-
-//               <div
-//                 className={`status-tag ${analysis.finalScore >= 70 ? "unsafe" : analysis.finalScore >= 40 ? "suspicious" : "safe"}`}
-//               >
-//                 {analysis.verdict}
-//               </div>
-
-//               <div
-//                 className="body-text"
-//                 dangerouslySetInnerHTML={{ __html: body }}
-//               ></div>
-
-//               <hr />
-
-//               <div className="verdict-box">
-//                 <h3>Risk Score: {analysis.finalScore}%</h3>
-
-//                 <h4>Reasons:</h4>
-//                 <ul>
-//                   {analysis.urlScans.map((u, i) => (
-//                     <React.Fragment key={i}>
-//                       {!u.googleSafe && <li>Google Safe Browsing flagged unsafe link</li>}
-//                       {u.vtMalicious > 0 && (
-//                         <li>VirusTotal: {u.vtMalicious} malicious detections</li>
-//                       )}
-//                       {u.vtSuspicious > 0 && (
-//                         <li>VirusTotal: {u.vtSuspicious} suspicious detections</li>
-//                       )}
-//                     </React.Fragment>
-//                   ))}
-
-//                   {analysis.attachmentScans.map((a, i) => (
-//                     a.vtMalicious > 0 ? (
-//                       <li key={i}>
-//                         Attachment {a.filename}: {a.vtMalicious} malicious engines
-//                       </li>
-//                     ) : null
-//                   ))}
-
-//                   {analysis.sandbox?.flags?.map((f, i) => (
-//                     <li key={i}>{f}</li>
-//                   ))}
-//                 </ul>
-//               </div>
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import api from "../api";
-import "../inbox.css";
-import { FiSearch } from "react-icons/fi";
+import "../styles/InboxPage.css";
+import { FaCheckCircle, FaExclamationTriangle, FaShieldAlt, FaLink, FaEnvelope } from "react-icons/fa";
 
 export default function InboxPage() {
-  const [emails, setEmails] = useState(null); // null = show loader
+  const [emails, setEmails] = useState([]);
   const [selected, setSelected] = useState(null);
   const [body, setBody] = useState("");
-  const [analysis, setAnalysis] = useState(null);
+  const [links, setLinks] = useState([]);
+  const [analysis, setAnalysis] = useState(null); // Store all 4 layers
+  const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [expandedEmail, setExpandedEmail] = useState(null);
+  const [analyzingEmail, setAnalyzingEmail] = useState(false);
 
-  const [search, setSearch] = useState("");
-
+  // Load inbox
   useEffect(() => {
     api
       .get("/emails")
-      .then((res) => setEmails(res.data))
-      .catch(() => setEmails([]));
+      .then((res) => {
+        setEmails(res.data);
+        setAuthenticated(true);
+        setLoading(false);
+
+        if (res.data.length > 0) {
+          loadFullEmail(res.data[0].id, res.data[0]);
+        }
+      })
+      .catch((err) => {
+        console.error("INBOX LOAD ERROR:", err);
+        setAuthenticated(false);
+        setLoading(false);
+      });
   }, []);
 
-  const loadEmail = (emailMeta) => {
+  // Load full email body + links
+  const loadFullEmail = (id, emailMeta) => {
     setSelected(emailMeta);
+    setExpandedEmail(id);
+    setAnalyzingEmail(true);
+    // IMPORTANT: Reset body and analysis before fetching new email
+    setBody("");
+    setLinks([]);
     setAnalysis(null);
 
-    api.get(`/email/${emailMeta.id}`).then((res) => {
-      setBody(res.data.body);
-      setAnalysis(res.data);
-    });
+    // Add cache-busting parameter to prevent stale data
+    api
+      .get(`/email/${id}?t=${Date.now()}`)
+      .then((res) => {
+        setBody(res.data.body || "");
+        setLinks(res.data.links || []);
+        setAnalysis({
+          verdict: res.data.verdict,
+          finalScore: res.data.finalScore,
+          urlScans: res.data.urlScans || [],
+          attachmentScans: res.data.attachmentScans || [],
+          sandbox: res.data.sandbox
+        });
+        setAnalyzingEmail(false);
+      })
+      .catch((err) => {
+        console.error("EMAIL BODY ERROR:", err);
+        setAnalyzingEmail(false);
+      });
   };
+
+  if (loading) {
+    return (
+      <div className="inbox-container">
+        <div className="loader-wrapper">
+          <div className="spinner"></div>
+          <p>Loading your inbox...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!authenticated) {
+    return (
+      <div className="inbox-container">
+        <div className="no-auth-wrapper">
+          <FaShieldAlt className="no-auth-icon" />
+          <h2>Secure Your Email</h2>
+          <p>
+            Login with your Gmail account to analyze emails for phishing,
+            malware, and suspicious links.
+          </p>
+          <a href="http://localhost:5000/auth/login" className="login-button">
+            <FaEnvelope /> Login with Google
+          </a>
+          <div className="auth-benefits">
+            <div className="benefit">
+              <FaCheckCircle /> Real-time threat detection
+            </div>
+            <div className="benefit">
+              <FaLink /> Advanced link analysis
+            </div>
+            <div className="benefit">
+              <FaShieldAlt /> Secure OAuth authentication
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="inbox-container">
+      <div className="inbox-layout">
+        {/* LEFT SIDEBAR: Email List */}
+        <div className="email-list-sidebar">
+          <div className="inbox-header">
+            <h2>
+              <FaEnvelope /> Inbox
+            </h2>
+            <span className="email-count">{emails.length}</span>
+          </div>
 
-      {/* LOADING SCREEN */}
-      {emails === null && (
-        <div className="global-loader">
-          <div className="spinner"></div>
-          <p>Loading inbox...</p>
-        </div>
-      )}
-
-      {/* TOP NAVBAR */}
-      <div className="topbar">
-        <div className="topbar-left">RakshaYantra Mail Security</div>
-
-        <div className="navbar-links">
-          <a href="/" className="nav-link active">Inbox</a>
-          <a href="/videos" className="nav-link">Videos</a>
-          <a href="/news" className="nav-link">News</a>
-        </div>
-
-        {/* WORKING SEARCH */}
-        <div className="search-box">
-          <FiSearch />
-          <input 
-            placeholder="Search email..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="layout">
-
-        {/* EMAIL LIST */}
-        <div className="email-list">
-
-          {emails?.length === 0 ? (
-            <a href="http://localhost:5000/auth/login" className="login-btn">
-              Login with Google
-            </a>
-          ) : (
-            emails
-              ?.filter(
-                (e) =>
-                  e.subject.toLowerCase().includes(search.toLowerCase()) ||
-                  e.from.toLowerCase().includes(search.toLowerCase())
-              )
-              .map((e) => (
+          <div className="email-list">
+            {emails.length === 0 ? (
+              <div className="no-emails">
+                <p>No emails found</p>
+              </div>
+            ) : (
+              emails.map((email) => (
                 <div
-                  key={e.id}
-                  onClick={() => loadEmail(e)}
-                  className={`email-item ${
-                    selected?.id === e.id ? "selected" : ""
-                  }`}
+                  key={email.id}
+                  className={`email-item ${selected?.id === email.id ? "selected" : ""}`}
+                  onClick={() => loadFullEmail(email.id, email)}
                 >
-                  <div>
-                    <div className="sender">{e.from}</div>
-                    <div className="subject">{e.subject}</div>
+                  <div className="email-item-content">
+                    <div className="sender-name">{email.from}</div>
+                    <div className="email-subject">{email.subject}</div>
+                    <div className="email-date">{email.date}</div>
                   </div>
-                  <div className="email-date">{e.date}</div>
+                  <div className="email-unread-indicator"></div>
                 </div>
               ))
-          )}
+            )}
+          </div>
+
+          <div className="sidebar-footer">
+            <a href="http://localhost:5000/auth/login" className="logout-button">
+              Refresh Inbox
+            </a>
+          </div>
         </div>
 
-        {/* EMAIL PREVIEW */}
-        <div className="email-preview">
-
-          {!selected ? (
-            <div className="no-email-selected">Select an email</div>
-          ) : !analysis ? (
-            <div className="no-email-selected">Analyzing email...</div>
-          ) : (
-            <div className="email-content">
-              <h2>{selected.subject}</h2>
-              <p className="from">From: {selected.from}</p>
-
-              <div
-                className={`status-tag ${
-                  analysis.finalScore >= 70
-                    ? "unsafe"
-                    : analysis.finalScore >= 40
-                    ? "suspicious"
-                    : "safe"
-                }`}
-              >
-                {analysis.verdict}
-              </div>
-
-              <div
-                className="body-text"
-                dangerouslySetInnerHTML={{ __html: body }}
-              ></div>
-
-              <hr />
-
-              <div className="verdict-box">
-                <h3>Risk Score: {analysis.finalScore}%</h3>
-                <h4>Reasons:</h4>
-
-                <ul>
-                  {analysis.urlScans.map((u, i) => (
-                    <React.Fragment key={i}>
-                      {!u.googleSafe && (
-                        <li>Google Safe Browsing flagged unsafe link</li>
-                      )}
-                      {u.vtMalicious > 0 && (
-                        <li>VirusTotal: {u.vtMalicious} malicious detections</li>
-                      )}
-                      {u.vtSuspicious > 0 && (
-                        <li>
-                          VirusTotal: {u.vtSuspicious} suspicious detections
-                        </li>
-                      )}
-                    </React.Fragment>
-                  ))}
-
-                  {analysis.attachmentScans.map((a, i) =>
-                    a.vtMalicious > 0 ? (
-                      <li key={i}>
-                        Attachment {a.filename}: {a.vtMalicious} malicious engines
-                      </li>
-                    ) : null
+        {/* RIGHT PANEL: Email Preview */}
+        <div className="email-preview-panel">
+          {selected ? (
+            <div className="email-preview-content">
+              <div className="email-header">
+                <div className="header-top">
+                  <h2 className="email-subject-large">{selected.subject}</h2>
+                  {analysis && (
+                    <span className={`email-security-badge ${
+                      analysis.verdict === "SAFE" ? "safe" : 
+                      analysis.verdict === "SUSPICIOUS" ? "warning" : 
+                      "danger"
+                    }`}>
+                      {analysis.verdict === "SAFE" ? <FaCheckCircle /> : <FaExclamationTriangle />}
+                      {" "}{analysis.verdict} ({analysis.finalScore}% risk)
+                    </span>
                   )}
+                </div>
 
-                  {analysis.sandbox?.flags?.map((f, i) => (
-                    <li key={i}>{f}</li>
-                  ))}
-                </ul>
+                <div className="email-meta">
+                  <div className="meta-item">
+                    <span className="meta-label">From:</span>
+                    <span className="meta-value">{selected.from}</span>
+                  </div>
+                  <div className="meta-item">
+                    <span className="meta-label">Date:</span>
+                    <span className="meta-value">{selected.date}</span>
+                  </div>
+                </div>
               </div>
+
+              <div className="email-divider"></div>
+
+              {/* Email Body */}
+              <div className="email-body">
+                <div className="body-text">
+                  {analyzingEmail ? (
+                    <div className="analyzing-loader">
+                      <div className="spinner"></div>
+                      <p>Analyzing email with 4-layer security scan...</p>
+                    </div>
+                  ) : body ? (
+                    <pre>{body}</pre>
+                  ) : (
+                    <p className="no-body">No message body found</p>
+                  )}
+                </div>
+              </div>
+
+              {/* 4-Layer Security Analysis */}
+              {analysis && !analyzingEmail && (
+                <>
+                  <div className="email-divider"></div>
+                  <div className="security-analysis-section">
+                    <h3 className="analysis-title">
+                      <FaShieldAlt /> 4-Layer Security Analysis
+                    </h3>
+
+                    {/* Layer 1: URL Scanning (Safe Browsing + VirusTotal) */}
+                    <div className="layer-card">
+                      <div className="layer-header">
+                        <h4>🔍 Layer 1 & 2: URL Analysis</h4>
+                        <span className={`layer-status ${
+                          analysis.urlScans?.some(u => !u.googleSafe || u.vtMalicious > 0 || u.heuristicVerdict === "MALICIOUS") ? "danger" :
+                          analysis.urlScans?.some(u => u.vtSuspicious > 0 || u.heuristicVerdict === "SUSPICIOUS") ? "warning" : "safe"
+                        }`}>
+                          {analysis.urlScans?.some(u => !u.googleSafe || u.vtMalicious > 0 || u.heuristicVerdict === "MALICIOUS") ? "⚠️ Threats Detected" :
+                           analysis.urlScans?.some(u => u.vtSuspicious > 0 || u.heuristicVerdict === "SUSPICIOUS") ? "⚠️ Suspicious" : "✅ Clean"}
+                        </span>
+                      </div>
+                      {analysis.urlScans && analysis.urlScans.length > 0 ? (
+                        <div className="layer-details">
+                          {analysis.urlScans.map((urlScan, idx) => (
+                            <div key={idx} className="scan-result-item">
+                              <div className="scan-url">
+                                <FaLink className="url-icon" />
+                                <small>{urlScan.url}</small>
+                              </div>
+                              <div className="scan-badges">
+                                <span className={`threat-badge ${urlScan.googleSafe ? "safe" : "danger"}`}>
+                                  Google Safe Browsing: {urlScan.googleSafe ? "✓ Safe" : `❌ ${urlScan.googleThreat}`}
+                                </span>
+                                <span className={`threat-badge ${
+                                  urlScan.vtMalicious > 0 ? "danger" : 
+                                  urlScan.vtSuspicious > 0 ? "warning" : "safe"
+                                }`}>
+                                  VirusTotal: {urlScan.vtMalicious > 0 ? `${urlScan.vtMalicious} malicious` :
+                                              urlScan.vtSuspicious > 0 ? `${urlScan.vtSuspicious} suspicious` :
+                                              "✓ Clean"}
+                                </span>
+                                {urlScan.heuristicScore !== undefined && urlScan.heuristicVerdict && (
+                                  <span className={`threat-badge ${
+                                    urlScan.heuristicVerdict === "MALICIOUS" ? "danger" :
+                                    urlScan.heuristicVerdict === "SUSPICIOUS" ? "warning" : "safe"
+                                  }`}>
+                                    Pattern Analysis: {urlScan.heuristicVerdict} ({urlScan.heuristicScore}%)
+                                  </span>
+                                )}
+                              </div>
+                              {urlScan.heuristicFindings && urlScan.heuristicFindings.length > 0 && (
+                                <div className="heuristic-findings">
+                                  <small><strong>⚠️ Suspicious patterns detected:</strong></small>
+                                  <ul>
+                                    {urlScan.heuristicFindings.map((finding, i) => (
+                                      <li key={i}><small>{finding}</small></li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="no-data">No URLs found in this email</p>
+                      )}
+                    </div>
+
+                    {/* Layer 3: Attachment Scanning */}
+                    <div className="layer-card">
+                      <div className="layer-header">
+                        <h4>📎 Layer 3: Attachment Analysis</h4>
+                        <span className={`layer-status ${
+                          analysis.attachmentScans?.some(a => a.vtMalicious > 0) ? "danger" :
+                          analysis.attachmentScans?.some(a => a.vtSuspicious > 0) ? "warning" : "safe"
+                        }`}>
+                          {analysis.attachmentScans?.some(a => a.vtMalicious > 0) ? "⚠️ Malicious File" :
+                           analysis.attachmentScans?.some(a => a.vtSuspicious > 0) ? "⚠️ Suspicious" : "✅ Clean"}
+                        </span>
+                      </div>
+                      {analysis.attachmentScans && analysis.attachmentScans.length > 0 ? (
+                        <div className="layer-details">
+                          {analysis.attachmentScans.map((att, idx) => (
+                            <div key={idx} className="scan-result-item">
+                              <div className="scan-url">
+                                <span className="file-icon">📄</span>
+                                <strong>{att.filename}</strong>
+                              </div>
+                              <div className="scan-badges">
+                                <span className={`threat-badge ${
+                                  att.vtMalicious > 0 ? "danger" : 
+                                  att.vtSuspicious > 0 ? "warning" : "safe"
+                                }`}>
+                                  VirusTotal: {att.vtMalicious > 0 ? `${att.vtMalicious} engines flagged as malicious` :
+                                              att.vtSuspicious > 0 ? `${att.vtSuspicious} engines flagged as suspicious` :
+                                              "✓ Clean (0 detections)"}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="no-data">No attachments in this email</p>
+                      )}
+                    </div>
+
+                    {/* Layer 4: Docker Sandbox */}
+                    <div className="layer-card">
+                      <div className="layer-header">
+                        <h4>🔒 Layer 4: Behavioral Analysis (Sandbox)</h4>
+                        <span className={`layer-status ${
+                          analysis.sandbox?.riskScore >= 50 ? "danger" :
+                          analysis.sandbox?.riskScore > 20 ? "warning" : "safe"
+                        }`}>
+                          {analysis.sandbox?.riskScore >= 50 ? "⚠️ Malicious Behavior" :
+                           analysis.sandbox?.riskScore > 20 ? "⚠️ Suspicious Activity" : "✅ Safe"}
+                        </span>
+                      </div>
+                      {analysis.sandbox ? (
+                        <div className="layer-details">
+                          <div className="sandbox-score">
+                            <p><strong>Risk Score:</strong> {analysis.sandbox.riskScore}%</p>
+                            <div className="risk-bar">
+                              <div 
+                                className="risk-fill" 
+                                style={{
+                                  width: `${analysis.sandbox.riskScore}%`,
+                                  backgroundColor: analysis.sandbox.riskScore >= 50 ? "#dc3545" :
+                                                    analysis.sandbox.riskScore > 20 ? "#ffc107" : "#28a745"
+                                }}
+                              ></div>
+                            </div>
+                            <p className="sandbox-description">
+                              {analysis.sandbox.riskScore >= 50 
+                                ? "The URL showed malicious behavior in isolated testing environment"
+                                : analysis.sandbox.riskScore > 20 
+                                ? "Some suspicious activities detected but not conclusive"
+                                : "No harmful activities detected in controlled testing"}
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="no-data">No sandbox analysis performed (no URLs to test)</p>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Links Section (Original) */}
+              {links.length > 0 && (
+                <>
+                  <div className="email-divider"></div>
+                  <div className="links-section">
+                    <h3 className="links-title">
+                      <FaLink /> Extracted Links ({links.length})
+                    </h3>
+                    <div className="links-list">
+                      {links.map((link, i) => (
+                        <div key={i} className="link-item">
+                          <div className="link-icon">
+                            <FaLink />
+                          </div>
+                          <a
+                            href={link}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="link-url"
+                            title={link}
+                          >
+                            {link.length > 80 ? link.substring(0, 80) + "..." : link}
+                          </a>
+                          <button className="link-action-button" title="Copy link">
+                            📋
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {links.length === 0 && (
+                <>
+                  <div className="email-divider"></div>
+                  <div className="no-links-info">
+                    <FaCheckCircle /> No suspicious links detected in this email
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="no-email-selected">
+              <FaEnvelope className="no-email-icon" />
+              <h3>Select an email to view details</h3>
+              <p>Click on any email from the list to analyze it</p>
             </div>
           )}
         </div>

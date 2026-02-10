@@ -1,29 +1,29 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+import HomePage from "./pages/HomePage.jsx";
 import InboxPage from "./pages/inboxPage.jsx";
+import ReportsPage from "./pages/ReportsPage.jsx";
 import VideosPage from "./pages/Tutorials.js";
 import NewsPage from "./pages/News.js";
 import ChatbotPage from "./pages/ChatbotModal.js";
-import "./App.css";
+import "./styles/App.css";
 
 function App() {
   return (
     <Router>
       <div className="App">
-
-        {/* Navbar */}
-
-        <ChatbotPage/>
-
-        {/* Routes */}
+        <Navbar />
+        <ChatbotPage />
         <Routes>
-          <Route path="/" element={<InboxPage />} />        {/* Main page */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/inbox" element={<ProtectedRoute element={<InboxPage />} />} />
+          <Route path="/reports" element={<ProtectedRoute element={<ReportsPage />} />} />
           <Route path="/videos" element={<VideosPage />} />
           <Route path="/news" element={<NewsPage />} />
-
-          {/* Any unknown path -> Inbox */}
-          <Route path="*" element={<InboxPage />} />
+          <Route path="*" element={<HomePage />} />
         </Routes>
-
       </div>
     </Router>
   );

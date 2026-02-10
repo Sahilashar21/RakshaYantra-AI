@@ -1,0 +1,171 @@
+/* ===================== NAVBAR STYLES ===================== */
+
+.navbar {
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.85) 0%, rgba(26, 31, 75, 0.85) 100%);
+  backdrop-filter: blur(20px) saturate(200%);
+  box-shadow: 0 15px 50px rgba(0, 255, 200, 0.15), 0 0 0 1px rgba(0, 255, 200, 0.25), inset 0 0 30px rgba(0, 255, 200, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid rgba(0, 255, 200, 0.15);
+  animation: slideInDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.navbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.4), transparent);
+  animation: shimmer 3s linear infinite;
+}
+
+.navbar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 255, 200, 0.02) 0%, rgba(102, 51, 255, 0.02) 100%);
+  pointer-events: none;
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 90px;
+  position: relative;
+  z-index: 2;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  font-size: 1.8rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #00ffc8 0%, #00ccff 40%, #6633ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  letter-spacing: -0.5px;
+  animation: gradientFlow 6s linear infinite;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 20px rgba(0, 255, 200, 0.6)) drop-shadow(0 0 40px rgba(102, 51, 255, 0.4));
+}
+
+.brand-icon {
+  font-size: 2.2rem;
+  color: #00ffc8;
+  animation: rotate 4s linear infinite;
+  filter: drop-shadow(0 0 20px rgba(0, 255, 200, 0.8)) drop-shadow(0 0 40px rgba(102, 51, 255, 0.4));
+  text-shadow: 0 0 30px rgba(0, 255, 200, 0.6);
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #c0d0ff;
+  font-weight: 700;
+  font-size: 1.05rem;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 12px 26px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.25), transparent);
+  transition: left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1;
+}
+
+.nav-link:hover::before {
+  left: 100%;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.8), transparent);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 2;
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.nav-link:hover {
+  color: #00ffc8;
+  background: rgba(0, 255, 200, 0.12);
+  box-shadow: 0 8px 25px rgba(0, 255, 200, 0.25), inset 0 0 15px rgba(0, 255, 200, 0.1);
+  transform: translateY(-2px);
+}
+
+.nav-link.active {
+  color: #00ffc8;
+  background: rgba(0, 255, 200, 0.18);
+  box-shadow: 0 12px 35px rgba(0, 255, 200, 0.35), inset 0 0 20px rgba(0, 255, 200, 0.15);
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 20px;
+    height: 80px;
+  }
+
+  .nav-links {
+    gap: 6px;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+    padding: 10px 16px;
+  }
+
+  .navbar-brand {
+    font-size: 1.4rem;
+  }
+
+  .brand-icon {
+    font-size: 1.8rem;
+  }
+}

@@ -251,7 +251,7 @@ export default function InboxPage() {
                                   <small><strong>⚠️ Suspicious patterns detected:</strong></small>
                                   <ul>
                                     {urlScan.heuristicFindings.map((finding, i) => (
-                                      <li key={i}><small>{finding}</small></li>
+                                      <li key={i}><small>✓ {finding}</small></li>
                                     ))}
                                   </ul>
                                 </div>

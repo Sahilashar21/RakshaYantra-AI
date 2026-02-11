@@ -269,7 +269,12 @@ const ReportsPage = () => {
                               </div>
                               {urlScan.heuristicFindings && urlScan.heuristicFindings.length > 0 && (
                                 <div className="heuristic-warnings">
-                                  <small><strong>⚠️ Detected:</strong> {urlScan.heuristicFindings.join(', ')}</small>
+                                  <small><strong>⚠️ Issues Detected:</strong></small>
+                                  <ul style={{margin: '6px 0 0 0', paddingLeft: '18px', fontSize: '0.85rem'}}>
+                                    {urlScan.heuristicFindings.map((finding, i) => (
+                                      <li key={i}><small>{finding}</small></li>
+                                    ))}
+                                  </ul>
                                 </div>
                               )}
                             </div>

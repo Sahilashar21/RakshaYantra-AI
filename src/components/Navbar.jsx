@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaShieldAlt, FaHome, FaEnvelope, FaChartBar } from "react-icons/fa";
+import { FaShieldAlt, FaHome, FaEnvelope, FaChartBar, FaComments } from "react-icons/fa";
 import "../styles/Navbar.css";
 
 export default function Navbar() {
@@ -26,6 +26,12 @@ export default function Navbar() {
             className={`nav-link ${location.pathname === "/inbox" ? "active" : ""}`}
           >
             <FaEnvelope /> Inbox
+          </Link>
+          <Link 
+            to="/message-analysis" 
+            className={`nav-link ${location.pathname === "/message-analysis" ? "active" : ""}`}
+          >
+            <FaComments /> Message Check
           </Link>
           <Link 
             to="/reports" 
